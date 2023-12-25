@@ -33,8 +33,10 @@ namespace EasyToBook.WebApp.Controllers
             {
                 _context.Villas.Add(obj);
                 _context.SaveChanges();
+                TempData["success"] = "Villa has been created successfully!";
                 return RedirectToAction("Index", "Villa");
             }
+            TempData["eror"] = "Something went wrong!";
             return View();
         }
 
@@ -45,6 +47,7 @@ namespace EasyToBook.WebApp.Controllers
             {
                 return RedirectToAction("Error","Home");
             }
+
             return View(villa);
         }
 
@@ -59,8 +62,10 @@ namespace EasyToBook.WebApp.Controllers
             {
                 _context.Villas.Update(editedVilla);
                 _context.SaveChanges();
+                TempData["success"] = "Villa has been updated successfully!";
                 return RedirectToAction("Index", "Villa");
             }
+            TempData["eror"] = "Something went wrong!";
             return View();
         }
 
@@ -82,8 +87,10 @@ namespace EasyToBook.WebApp.Controllers
             {
                 _context.Villas.Remove(check);
                 _context.SaveChanges();
+                TempData["success"] = "Villa has been deleted successfully!";
                 return RedirectToAction("Index", "Villa");
             }
+            TempData["eror"] = "Something went wrong!";
             return View();
         }
 
