@@ -13,7 +13,7 @@ namespace EasyToBook.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Villa> Villas { get; set; }
-
+        public DbSet<VillaNumber> VillaNumbers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // base.OnModelCreating(modelBuilder);
@@ -52,6 +52,38 @@ namespace EasyToBook.Infrastructure.Data
 
                  }
             );
+            modelBuilder.Entity<VillaNumber>().HasData(
+                new VillaNumber
+                {
+                    Villa_Number = 201,
+                    VillaId = 2,
+                    
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 202,
+                    VillaId = 2,
+                    
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 203,
+                    VillaId = 2,
+                    
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 301,
+                    VillaId = 3,
+                    
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 302,
+                    VillaId = 3,
+                    
+                }
+                );
         }
     }
 }
