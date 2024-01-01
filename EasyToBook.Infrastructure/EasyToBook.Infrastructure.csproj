@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EasyToBook.Domain\EasyToBook.Domain.csproj" />
+    <ProjectReference Include="..\EasyToBook.Application\EasyToBook.Application.csproj" />
   </ItemGroup>
 
 </Project>

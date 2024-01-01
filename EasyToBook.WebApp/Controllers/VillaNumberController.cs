@@ -1,5 +1,6 @@
 ﻿using EasyToBook.Domain.Entities;
 using EasyToBook.Infrastructure.Data;
+using EasyToBook.Infrastructure.Repositories;
 using EasyToBook.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,14 +10,14 @@ namespace EasyToBook.WebApp.Controllers
 {
     public class VillaNumberController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public VillaNumberController(ApplicationDbContext context)
+        private readonly UnitOfWork _unitOfWork;
+        public VillaNumberController(UnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var VillaNumbers = _context.VillaNumbers.Include(u=>u.villa).ToList();
+            var VillaNumbers = _unitOfWork.VillaNumber.GetAll(includeProperties:"Villa");
             return View(VillaNumbers);
         }
 
@@ -25,7 +26,7 @@ namespace EasyToBook.WebApp.Controllers
             VillaNumberVM villaNumberVM = new()
             
             {
-                VillaList = _context.Villas.ToList().Select(
+                VillaList = _unitOfWork.Villa.GetAll().Select(
                 u => new SelectListItem
                 {
                     Text = u.Name,
@@ -44,11 +45,11 @@ namespace EasyToBook.WebApp.Controllers
         public IActionResult Create(VillaNumberVM obj)
         {
             //ModelState.Remove("Villa");
-            bool villaNumberExist = _context.VillaNumbers.Any(u=>u.Villa_Number == obj.VillaNumber.Villa_Number);
+            bool villaNumberExist = _unitOfWork.VillaNumber.Any(u=>u.Villa_Number == obj.VillaNumber.Villa_Number);
             if (ModelState.IsValid && !villaNumberExist)
             {
-                _context.VillaNumbers.Add(obj.VillaNumber);
-                _context.SaveChanges();
+                _unitOfWork.VillaNumber.Add(obj.VillaNumber);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "Villa Number has been created successfully!";
                 return RedirectToAction("Index", "VillaNumber");
             }
@@ -56,11 +57,11 @@ namespace EasyToBook.WebApp.Controllers
             {
                 TempData["error"] = "Villa Number Exists!";
             }
-            obj.VillaList = _context.Villas.ToList().Select(
+            obj.VillaList = _unitOfWork.VillaNumber.GetAll().Select(
                 u => new SelectListItem
                 {
-                    Text = u.Name,
-                    Value = u.Id.ToString(),
+                    Text = u.villa.Name,
+                    Value = u.villa.Id.ToString(),
                 }
 
                 );
@@ -72,15 +73,15 @@ namespace EasyToBook.WebApp.Controllers
             VillaNumberVM villaNumberVM = new()
 
             {
-                VillaList = _context.Villas.ToList().Select(
+                VillaList = _unitOfWork.VillaNumber.GetAll().Select(
                 u => new SelectListItem
                 {
-                    Text = u.Name,
-                    Value = u.Id.ToString(),
+                    Text = u.villa.Name,
+                    Value = u.villa.Id.ToString(),
                 }
 
                 ),
-                VillaNumber = _context.VillaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId)
+                VillaNumber = _unitOfWork.VillaNumber.Get(x => x.Villa_Number == villaNumberId)
             };
             if (villaNumberVM.VillaNumber == null) {
                 return RedirectToAction("Error", "Home");
@@ -95,12 +96,12 @@ namespace EasyToBook.WebApp.Controllers
             
             if (ModelState.IsValid)
             {
-                _context.VillaNumbers.Update(editedVillaNMBRVM.VillaNumber);
-                _context.SaveChanges();
+                _unitOfWork.VillaNumber.Update(editedVillaNMBRVM.VillaNumber);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "Villa Number has been updated successfully!";
-                return RedirectToAction("Index", "VillaNumber");
+                return RedirectToAction(nameof(Index), "VillaNumber");
             }
-            editedVillaNMBRVM.VillaList = _context.Villas.ToList().Select(
+            editedVillaNMBRVM.VillaList = _unitOfWork.Villa.GetAll().Select(
                 u => new SelectListItem
                 {
                     Text = u.Name,
@@ -116,7 +117,7 @@ namespace EasyToBook.WebApp.Controllers
             VillaNumberVM villaNumberVM = new()
 
             {
-                VillaList = _context.Villas.ToList().Select(
+                VillaList = _unitOfWork.Villa.GetAll().Select(
                 u => new SelectListItem
                 {
                     Text = u.Name,
@@ -124,7 +125,7 @@ namespace EasyToBook.WebApp.Controllers
                 }
 
                 ),
-                VillaNumber = _context.VillaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId)
+                VillaNumber = _unitOfWork.VillaNumber.Get(x => x.Villa_Number == villaNumberId)
             };
             if (villaNumberVM.VillaNumber == null)
             {
@@ -136,11 +137,11 @@ namespace EasyToBook.WebApp.Controllers
         [HttpPost]
         public IActionResult Delete(VillaNumberVM deletedVillaNumberVM)
         {
-            VillaNumber? check = _context.VillaNumbers.FirstOrDefault(u => u.Villa_Number == deletedVillaNumberVM.VillaNumber.Villa_Number);
+            VillaNumber? check = _unitOfWork.VillaNumber.Get(u => u.Villa_Number == deletedVillaNumberVM.VillaNumber.Villa_Number);
             if (check is not null)
             {
-                _context.VillaNumbers.Remove(check);
-                _context.SaveChanges();
+                _unitOfWork.VillaNumber.Remove(check);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "Villa Number has been deleted successfully!";
                 return RedirectToAction(nameof(Index));
             }

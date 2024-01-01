@@ -1,4 +1,5 @@
-﻿using EasyToBook.Domain.Entities;
+﻿using EasyToBook.Application.Common.Interfaces;
+using EasyToBook.Domain.Entities;
 using EasyToBook.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,14 +7,14 @@ namespace EasyToBook.WebApp.Controllers
 {
     public class VillaController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public VillaController(ApplicationDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public VillaController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var villas = _context.Villas.ToList();
+            var villas = _unitOfWork.Villa.GetAll();
             return View(villas);
         }
 
@@ -31,8 +32,8 @@ namespace EasyToBook.WebApp.Controllers
             }
             if (ModelState.IsValid)
             {
-                _context.Villas.Add(obj);
-                _context.SaveChanges();
+                _unitOfWork.Villa.Add(obj);
+                _unitOfWork.Villa.Save();
                 TempData["success"] = "Villa has been created successfully!";
                 return RedirectToAction("Index", "Villa");
             }
@@ -42,7 +43,7 @@ namespace EasyToBook.WebApp.Controllers
 
         public IActionResult Update(int villaId)
         {
-            Villa? villa = _context.Villas.FirstOrDefault(x => x.Id == villaId);
+            Villa? villa = _unitOfWork.Villa.Get(x => x.Id == villaId);
             if(villa == null)
             {
                 return RedirectToAction("Error","Home");
@@ -60,8 +61,8 @@ namespace EasyToBook.WebApp.Controllers
             }
             if (ModelState.IsValid & editedVilla.Id>0)
             {
-                _context.Villas.Update(editedVilla);
-                _context.SaveChanges();
+                _unitOfWork.Villa.Update(editedVilla);
+                _unitOfWork.Villa.Save();
                 TempData["success"] = "Villa has been updated successfully!";
                 return RedirectToAction("Index", "Villa");
             }
@@ -71,7 +72,7 @@ namespace EasyToBook.WebApp.Controllers
 
         public IActionResult Delete(int villaId)
         {
-            Villa? villa = _context.Villas.FirstOrDefault(x => x.Id == villaId);
+            Villa? villa = _unitOfWork.Villa.Get(x => x.Id == villaId);
             if (villa is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -82,11 +83,11 @@ namespace EasyToBook.WebApp.Controllers
         [HttpPost]
         public IActionResult Delete(Villa deletedVilla)
         {
-            Villa? check = _context.Villas.FirstOrDefault(u => u.Id == deletedVilla.Id);
+            Villa? check = _unitOfWork.Villa.Get(u => u.Id == deletedVilla.Id);
             if (check is not null)
             {
-                _context.Villas.Remove(check);
-                _context.SaveChanges();
+                _unitOfWork.Villa.Remove(check);
+                _unitOfWork.Villa.Save();
                 TempData["success"] = "Villa has been deleted successfully!";
                 return RedirectToAction("Index", "Villa");
             }
