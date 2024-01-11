@@ -18,4 +18,8 @@
     <ProjectReference Include="..\EasyToBook.Infrastructure\EasyToBook.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\Villa\" />
+  </ItemGroup>
+
 </Project>
