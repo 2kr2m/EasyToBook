@@ -1,4 +1,5 @@
-﻿using EasyToBook.Domain.Entities;
+﻿using EasyToBook.Application.Common.Interfaces;
+using EasyToBook.Domain.Entities;
 using EasyToBook.Infrastructure.Data;
 using EasyToBook.Infrastructure.Repositories;
 using EasyToBook.WebApp.ViewModels;
@@ -10,14 +11,14 @@ namespace EasyToBook.WebApp.Controllers
 {
     public class VillaNumberController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
-        public VillaNumberController(UnitOfWork unitOfWork)
+        private readonly IUnitOfWork _unitOfWork;
+        public VillaNumberController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var VillaNumbers = _unitOfWork.VillaNumber.GetAll(includeProperties:"Villa");
+            var VillaNumbers = _unitOfWork.VillaNumber.GetAll(includeProperties:"villa");
             return View(VillaNumbers);
         }
 
