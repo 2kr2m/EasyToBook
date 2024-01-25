@@ -1,12 +1,15 @@
 ﻿using EasyToBook.Application.Common.Interfaces;
+using EasyToBook.Application.Common.Utility;
 using EasyToBook.Domain.Entities;
 using EasyToBook.Infrastructure.Repositories;
 using EasyToBook.WebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EasyToBook.WebApp.Controllers
 {
+    [Authorize(Roles =SD.Role_Admin)]
     public class AmenityController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

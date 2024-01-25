@@ -1,11 +1,13 @@
 ﻿using EasyToBook.Application.Common.Interfaces;
 using EasyToBook.Domain.Entities;
 using EasyToBook.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.WebRequestMethods;
 
 namespace EasyToBook.WebApp.Controllers
 {
+    [Authorize]
     public class VillaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

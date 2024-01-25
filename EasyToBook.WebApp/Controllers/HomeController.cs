@@ -1,4 +1,6 @@
+using EasyToBook.Application.Common.Interfaces;
 using EasyToBook.WebApp.Models;
+using EasyToBook.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +8,23 @@ namespace EasyToBook.WebApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            HomeVM homeVM = new()
+            {
+                villaList = _unitOfWork.Villa.GetAll(includeProperties:"Amenities"),
+                nmbrOfNights = 1,
+                checkInDate = DateOnly.FromDateTime(DateTime.Now),
+                checkOutDate = DateOnly.FromDateTime(DateTime.Now)
+            };
+            return View(homeVM);
         }
 
         public IActionResult Privacy()
